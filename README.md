@@ -1,74 +1,109 @@
-# AI Game Referee – Rock Paper Scissors Plus
+#AI Game Referee – Rock Paper Scissors Plus
 
-## Overview
-This project implements a minimal AI referee chatbot that runs a short game of
-Rock–Paper–Scissors–Plus between a user and the bot. The referee enforces rules,
-tracks game state across rounds, and provides clear, round-by-round decisions.
+__Overview__
 
-The focus of this implementation is correctness, clarity of logic, and clean
-separation of responsibilities rather than UI polish.
+This project is a simple AI referee chatbot that runs a short game of
+Rock–Paper–Scissors–Plus between a user and the bot.
+The referee is responsible for enforcing the rules, tracking the game state,
+and clearly explaining the outcome of each round.
 
----
+The goal of this assignment was not to build a fancy UI, but to focus on
+correct logic, clean structure, and clarity in how decisions are made and
+communicated.
 
-## Game Rules
-- Best of 3 rounds
-- Valid moves: rock, paper, scissors, bomb
-- Bomb can be used only once per player per game
-- Bomb beats all other moves
-- Bomb vs bomb results in a draw
-- Invalid input wastes the round
-- Game ends automatically after 3 rounds
+__Game Rules__
 
----
+-The game is played as best of 3 rounds
+-Valid moves are: rock, paper, scissors, and bomb
+-Each player can use bomb only once per game
+-Bomb vs bomb results in a draw
+-Invalid input wastes the round
+-The game ends automatically after 3 rounds
 
-## State Model
-The game uses an explicit state object to track:
-- Current round number
-- Maximum rounds
-- User score
-- Bot score
-- Whether the bomb has been used by each player
+__State Model__
 
-State is stored in a Python dictionary and is not kept in prompts or implicit
-agent memory. This ensures deterministic behavior and strict rule enforcement.
+The game uses an explicit state object to keep track of everything needed to
+run the game correctly, including:
 
----
+-Current round number
+-Maximum number of rounds
+-User score
+-Bot score
+-Whether the bomb has already been used by each player
 
-## Game Logic Design
-The implementation separates concerns clearly:
-- **Input validation** ensures moves are legal and bomb usage rules are respected.
-- **Round resolution** determines the winner using explicit rules.
-- **State updates** handle score changes, bomb usage, and round progression.
-- **Response generation** explains each decision in a referee-style tone.
+All state is stored in a Python dictionary and passed through the game loop.
+Nothing is stored implicitly in prompts or hidden memory.
+This makes the behavior deterministic, easier to debug, and easy to reason
+about.
 
----
+__Game Logic Design__
 
-## Execution Model
+The implementation is intentionally split into clear responsibilities:
+
+-Input validation checks whether a move is valid and whether bomb usage
+follows the rules.
+-Round resolution applies the game rules to determine the winner.
+-State updates handle score changes, bomb usage, and round progression.
+-Response generation explains the outcome in a referee-style, human-readable
+way.
+
+Keeping these concerns separate makes the code easier to maintain and extend.
+
+__Decision Reason Codes__
+
+In addition to human-readable explanations, each round outcome also includes a
+machine-readable reason code (for example: RPS_STANDARD_RULE,
+BOMB_OVERRIDES, SAME_MOVE).
+
+This allows decisions to be:
+
+-Audited or logged easily
+-Debugged without relying only on text output
+-Extended later for UI, analytics, or replay features
+
+The idea was to separate why a decision happened from how it is explained
+to the user.
+
+__Agent Design__
+
+The referee is designed as a single agent that:
+
+-Interprets user input
+-Applies deterministic game logic through small, focused functions
+-Maintains explicit game state outside of prompts
+-Communicates decisions conversationally
+
+Although the implementation uses plain Python, the structure follows
+agent-oriented design principles and can be easily adapted to an Agent
+Development Kit (ADK) style setup if needed.
+
+__Execution Model__
+
 The game runs in a simple command-line conversational loop:
-1. The referee explains the rules.
-2. The user is prompted for a move.
-3. The bot selects a valid move.
-4. The referee resolves the round and explains the outcome.
-5. Scores are updated and displayed.
-6. The game ends automatically after three rounds.
+
+-The referee explains the rules.
+-The user is prompted for a move.
+-The bot selects a valid move.
+-The referee resolves the round and explains the decision.
+-Scores are updated and displayed.
+-The game ends automatically after three rounds.
 
 No databases, external APIs, or UI frameworks are used.
 
----
+__Tradeoffs__
 
-## Tradeoffs
-- A CLI interface was chosen to keep the focus on logic and state management.
-- The bot uses random move selection rather than strategy to keep behavior simple.
+-A CLI-based interface was chosen to keep the focus on logic and state handling.
+-The bot uses random move selection rather than strategy to keep the behavior
+simple and predictable.
 
----
+__Future Improvements__
 
-## Future Improvements
-- Multi-agent setup (separate referee and strategist agents)
-- Replay or audit mode using stored round history
-- UI or web-based interface
-- Smarter bot strategy based on game history
+With more time, this could be extended to include:
 
----
+-Multiple agents (for example, a referee agent and a strategy agent)
+-A full round-by-round game transcript or replay mode
+-A simple UI or web interface
+-A smarter bot that adapts based on previous rounds
 
 ## How to Run
 ```bash
